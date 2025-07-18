@@ -1,0 +1,53 @@
+syntax = "proto3";
+
+package user;
+
+option go_package = ".;pb";
+
+service UserService {
+    rpc GetUserById(GetUserByIdRequest) returns (GetUserByIdResponse);
+    rpc CreateUser(CreateUserRequest) returns (CreateUserResponse);
+    rpc CheckStatus(CheckStatusRequest) returns (CheckStatusResponse);
+    rpc IsUserAuthorized(IsUserAuthorizedRequest) returns (IsUserAuthorizedResponse);
+}
+
+message GetUserByIdRequest {
+    string id = 1;
+}
+
+message GetUserByIdResponse {
+    string id = 1;
+    string username = 2;
+    string password = 3;
+    string fullName = 4;
+    string email = 5;
+    bool isActive = 6;
+}
+
+message CreateUserRequest {
+    string username = 1;
+    string password = 2;
+    string fullName = 3;
+    string email = 4;
+}
+
+message CreateUserResponse {
+    string id = 1;
+}
+
+message CheckStatusRequest {
+    string id = 1;
+}
+
+message CheckStatusResponse {
+    bool isActive = 1;
+}
+
+message IsUserAuthorizedRequest {
+    string id = 1;
+    string role = 2;
+}
+
+message IsUserAuthorizedResponse {
+    bool isAuthorized = 1;
+}
