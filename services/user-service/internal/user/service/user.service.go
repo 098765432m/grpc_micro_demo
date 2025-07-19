@@ -10,7 +10,7 @@ import (
 
 type UserRepo interface {
 	FindById(id string) (*domain.User, error)
-	Save(u *domain.User) error
+	Save(u *domain.User) (string, error)
 }
 
 type UserService struct {
@@ -24,14 +24,14 @@ type CreateUser struct {
 	Email    string
 }
 
-func (us *UserService) HandleCreate(newUser CreateUser) error {
+func (us *UserService) HandleCreate(newUser CreateUser) (string, error) {
 	id := uuid.New().String()
 
 	// Hash password
 	hashPass := newUser.Password
 	u, err := domain.NewUser(id, newUser.Username, hashPass, newUser.FullName, newUser.Email, consts.RoleGuest, false)
 	if err != nil {
-		return fmt.Errorf("failed to create new User: %v", err)
+		return "", fmt.Errorf("failed to create new User: %v", err)
 	}
 
 	return us.repo.Save(u)

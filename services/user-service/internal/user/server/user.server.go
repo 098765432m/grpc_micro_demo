@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/098765432m/grpc-micro/user-service/internal/user/service"
 	"github.com/098765432m/grpc-micro/user-service/scripts/pb"
@@ -26,7 +27,6 @@ func (us *UserServer) GetUserById(ctx context.Context, req *pb.GetUserByIdReques
 	}
 
 	return &pb.GetUserByIdResponse{
-
 		Id:       user.Id,
 		Username: user.Username,
 		Password: user.Password,
@@ -45,10 +45,35 @@ func (us *UserServer) CreateUser(ctx context.Context, req *pb.CreateUserRequest)
 		Email:    req.GetEmail(),
 	}
 
-	err := us.userService.HandleCreate(newUser)
+	newId, err := us.userService.HandleCreate(newUser)
 	if err != nil {
 		return nil, err
 	}
 
-	return &pb.CreateUserResponse{}, nil
+	return &pb.CreateUserResponse{
+		Id: newId,
+	}, nil
+}
+
+func (us *UserServer) CheckStatus(ctx context.Context, req *pb.CheckStatusRequest) (*pb.CheckStatusResponse, error) {
+	isActive, err := us.userService.HandleCheckStatus(req.GetId())
+	if err != nil {
+		return nil, fmt.Errorf("failed to get user %s: %v", req.GetId(), err)
+	}
+
+	return &pb.CheckStatusResponse{
+		IsActive: isActive,
+	}, nil
+}
+
+func (us *UserServer) CheckUserAuthorized(ctx context.Context, req *pb.IsUserAuthorizedRequest) (*pb.IsUserAuthorizedResponse, error) {
+
+	isAuthorized, err := us.userService.HandleCheckUserAuthorized(req.GetId(), req.GetRole())
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.IsUserAuthorizedResponse{
+		IsAuthorized: isAuthorized,
+	}, nil
 }

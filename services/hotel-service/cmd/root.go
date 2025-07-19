@@ -5,8 +5,7 @@ import (
 	"log"
 	"net"
 
-	"github.com/098765432m/user-service/internal/handler"
-	"github.com/098765432m/user-service/pb"
+	"github.com/098765432m/grpc-micro-demo/hotel-service/consts"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc"
@@ -16,6 +15,7 @@ var rootCmd = &cobra.Command{
 	Use:   "app",
 	Short: "Start service",
 	Run: func(cmd *cobra.Command, args []string) {
+		fmt.Println("You have run hotel service com!mand")
 
 		router := gin.Default()
 
@@ -36,21 +36,15 @@ var rootCmd = &cobra.Command{
 		setUpRouters(v1)
 
 		// Run gin router
-		if err := router.Run(fmt.Sprintf(":%d", 3101)); err != nil {
+		if err := router.Run(fmt.Sprintf(":%d", consts.API_PORT)); err != nil {
 			log.Fatal(err)
 		}
-
 	},
-}
-
-// Diem de set router
-func setUpRouters(router *gin.RouterGroup) {
-
 }
 
 // khoi tao grpc server
 func startGrpcServices() {
-	lis, err := net.Listen("tcp", ":50051")
+	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", consts.GRPC_SERVER_PORT))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -69,7 +63,7 @@ func startGrpcServices() {
 
 	// Connect to hotel service end
 
-	fmt.Printf("User gRpc running on port: %d\n", 50051)
+	fmt.Printf("User gRpc running on port: %d\n", consts.GRPC_SERVER_PORT)
 
 	if err := server.Serve(lis); err != nil {
 		log.Fatal("Cannot run user grpc server")
@@ -78,6 +72,6 @@ func startGrpcServices() {
 
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
-		log.Fatal("Khong the thuc chay lenh")
+		log.Fatal("failed to run hotel service command: ", err)
 	}
 }
