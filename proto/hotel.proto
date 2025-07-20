@@ -7,6 +7,12 @@ option go_package = ".;pb";
 service HotelService {
     rpc GetHotelById(GetUserByIdRequest) returns (GetUserByIdResponse);
     rpc CreateHotel(CreateHotelRequest) returns (CreateHotelResponse);
+
+    // Tutorial
+    rpc SimpleRpc(SimpleRequest) returns (SimpleResponse);
+    rpc ServerStreamingRpc(SimpleRequest) returns (stream SimpleResponse);
+    rpc ClientStreamingRpc(stream SimpleRequest) returns (SimpleResponse);
+    rpc BidirectionalStreamingRpc(stream SimpleRequest) returns (stream SimpleResponse);
 }
 
 message GetUserByIdRequest {
@@ -26,4 +32,13 @@ message CreateHotelRequest {
 
 message CreateHotelResponse {
     string id = 1;
+}
+
+// tutorial
+message SimpleRequest {
+    string message = 1;
+}
+
+message SimpleResponse {
+    string message = 1;
 }

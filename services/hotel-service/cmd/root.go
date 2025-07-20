@@ -6,6 +6,8 @@ import (
 	"net"
 
 	"github.com/098765432m/grpc-micro-demo/hotel-service/consts"
+	"github.com/098765432m/grpc-micro-demo/hotel-service/internal/server"
+	"github.com/098765432m/grpc-micro-demo/hotel-service/scripts/pb"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc"
@@ -42,6 +44,10 @@ var rootCmd = &cobra.Command{
 	},
 }
 
+func setUpRouters(router *gin.RouterGroup) {
+
+}
+
 // khoi tao grpc server
 func startGrpcServices() {
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", consts.GRPC_SERVER_PORT))
@@ -49,9 +55,9 @@ func startGrpcServices() {
 		log.Fatal(err)
 	}
 
-	server := grpc.NewServer()
+	grpcServer := grpc.NewServer()
 
-	pb.RegisterUserServiceServer(server, &handler.UserHanlder{})
+	pb.RegisterHotelServiceServer(grpcServer, &server.HotelServer{})
 
 	// Connect to hotel service start
 	// conn, err := grpc.NewClient("localhost:50022")
@@ -65,7 +71,7 @@ func startGrpcServices() {
 
 	fmt.Printf("User gRpc running on port: %d\n", consts.GRPC_SERVER_PORT)
 
-	if err := server.Serve(lis); err != nil {
+	if err := grpcServer.Serve(lis); err != nil {
 		log.Fatal("Cannot run user grpc server")
 	}
 }
